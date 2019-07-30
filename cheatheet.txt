@@ -1,0 +1,8 @@
+cd v papky s docker-compose.yml
+docker-compose up -d
+docker ps -a
+docker exec -it (dbname) psql -U postgres
+(NENADO create database todolist   \c todolist)
+
+
+about migrations - http://qaru.site/questions/59916/sequelizejs-how-to-use-migrations-and-sync

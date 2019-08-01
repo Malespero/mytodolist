@@ -95,9 +95,9 @@ const deleteTodoHandler = async (request, h) => {
 }
 
 module.exports = [
-    { method: 'GET', path: '/todos/{list_id}', handler: todosHandler },
-    { method: 'GET', path: '/todosall', handler: todosAllHandler },
-    { method: 'POST', path: '/todo/{list_id}', handler: createTodoHandler },
-    { method: 'PUT', path: '/todo/{list_id}/{id}', handler: updateTodoHandler },
-    { method: 'DELETE', path: '/todo/{list_id}/{id}', handler: deleteTodoHandler }
+    { method: 'GET', path: '/lists/{list_id}/todos', handler: todosHandler }, // all todos for one list
+    { method: 'GET', path: '/todosall', handler: todosAllHandler },//test route
+    { method: 'POST', path: '/lists/{list_id}/todocreate', handler: createTodoHandler }, //create todo for specific list
+    { method: 'PUT', path: '/lists/{list_id}/todos/{id}', handler: updateTodoHandler }, //update specific todo
+    { method: 'DELETE', path: '/lists/{list_id}/todos/{id}', handler: deleteTodoHandler } // delete specific todo
 ];

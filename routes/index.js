@@ -1,2 +1,3 @@
 const todos = require('./todos');
-module.exports = [].concat(todos);
+const todolists = require('./todolists');
+module.exports = [].concat(todos).concat(todolists);

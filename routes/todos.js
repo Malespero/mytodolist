@@ -1,6 +1,23 @@
 const Models = require('../models/index')
 
+//all todos belongs to list by listid and sorted by order
 const todosHandler = async (request, h) => {
+    try {
+        const list_id = request.params.list_id;
+        const todos = await Models.TodoModel.findAll(
+          {where: {todolistmodelId: list_id},
+          order: [['number', 'ASC']]
+        }
+      )
+      return { data: todos }
+    }
+    catch (error) {
+        return h.response({ error: error.message }).code(400)
+    }
+}
+
+//for tests
+const todosAllHandler = async (request, h) => {
     try {
         const todos = await Models.TodoModel.findAll({order: [['number', 'ASC']]})
         return { data: todos }
@@ -9,15 +26,19 @@ const todosHandler = async (request, h) => {
     }
 }
 
+//
 const createTodoHandler = async (request, h) => {
     try {
-        const { text, status, number } = request.payload;
+        const list_id = request.params.list_id;
+        const {  text, status, number } = request.payload;
         const todo = await Models.TodoModel.create({
             text: text,
             status: status,
-            number: number
-        })
-        return {
+            number: number,
+            todolistmodelId: list_id
+        }
+      )
+      return {
             data: todo,
             message: 'New todo has been created.'
         }
@@ -30,14 +51,17 @@ const createTodoHandler = async (request, h) => {
 
 const updateTodoHandler = async (request, h) => {
     try {
+        const list_id = request.params.list_id;
         const todo_id = request.params.id;
         const { text, status, number } = request.payload;
         const todo = await Models.TodoModel.update({
           text: text,
           status: status,
-          number: number
+          number: number,
+          todolistmodelId: list_id
         }, {
                 where: {
+                    todolistmodelId: list_id,
                     id: todo_id
                 }
             })
@@ -54,9 +78,11 @@ const updateTodoHandler = async (request, h) => {
 
 const deleteTodoHandler = async (request, h) => {
     try {
+        const list_id = request.params.list_id;
         const todo_id = request.params.id;
         await Models.TodoModel.destroy({
             where: {
+                todolistmodelId: list_id,
                 id: todo_id
             }
         })
@@ -69,8 +95,9 @@ const deleteTodoHandler = async (request, h) => {
 }
 
 module.exports = [
-    { method: 'GET', path: '/todos', handler: todosHandler },
-    { method: 'POST', path: '/todo', handler: createTodoHandler },
-    { method: 'PUT', path: '/todo/{id}', handler: updateTodoHandler },
-    { method: 'DELETE', path: '/todo/{id}', handler: deleteTodoHandler }
+    { method: 'GET', path: '/todos/{list_id}', handler: todosHandler },
+    { method: 'GET', path: '/todosall', handler: todosAllHandler },
+    { method: 'POST', path: '/todo/{list_id}', handler: createTodoHandler },
+    { method: 'PUT', path: '/todo/{list_id}/{id}', handler: updateTodoHandler },
+    { method: 'DELETE', path: '/todo/{list_id}/{id}', handler: deleteTodoHandler }
 ];
